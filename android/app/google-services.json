@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1081255348122",
+    "project_id": "protocolsproj",
+    "storage_bucket": "protocolsproj.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081255348122:android:e0efc4a9fe6a6d75e55c23",
+        "android_client_info": {
+          "package_name": "com.guc.protocols.protocols_proj"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnGg3ijFbdLJxEtnaT2xLCzhnohCm9qto"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
