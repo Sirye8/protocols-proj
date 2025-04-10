@@ -93,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 minimumSize: const Size.fromHeight(48),
               ),
               icon: Image.asset(
-                'assets/google_logo.jpeg',
+                'assets/google_logo.png',
                 height: 24,
                 width: 24,
               ),
