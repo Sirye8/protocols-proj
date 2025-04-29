@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(), // Spacer at top
+            const SizedBox(),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

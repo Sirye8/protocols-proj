@@ -11,26 +11,26 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  String? errorMessage;
+  String? error;
 
-  void _createAccount() async {
+  void createAccount() async {
     try {
       await authService.value.createAccount(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      Navigator.pop(context); // Navigate back to login or home
+      Navigator.pop(context);
     } catch (e) {
-      setState(() => errorMessage = e.toString());
+      setState(() => error = "Error while creating account, try again");
     }
   }
 
-  void _signUpWithGoogle() async {
+  void signUpWithGoogle() async {
     try {
       await authService.value.signInWithGoogle();
-      Navigator.pop(context); // Or navigate to home if needed
+      Navigator.pop(context);
     } catch (e) {
-      setState(() => errorMessage = e.toString());
+      setState(() => error = "Could not sign in with Google");
     }
   }
 
@@ -73,8 +73,8 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
             const SizedBox(height: 16),
-            if (errorMessage != null)
-              Text(errorMessage!, style: const TextStyle(color: Colors.red)),
+            if (error != null)
+              Text(error!, style: const TextStyle(color: Colors.red, fontSize: 16)),
             const SizedBox(height: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -82,7 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 foregroundColor: Colors.black,
                 minimumSize: const Size.fromHeight(48),
               ),
-              onPressed: _createAccount,
+              onPressed: createAccount,
               child: const Text('Sign Up'),
             ),
             const SizedBox(height: 12),
@@ -98,7 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 width: 24,
               ),
               label: const Text("Sign up with Google"),
-              onPressed: _signUpWithGoogle,
+              onPressed: signUpWithGoogle,
             ),
           ],
         ),

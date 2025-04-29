@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,10 +7,10 @@ class TakeAttendancePage extends StatefulWidget {
   const TakeAttendancePage({super.key});
 
   @override
-  State<TakeAttendancePage> createState() => _TakeAttendancePageState();
+  State<TakeAttendancePage> createState() => TakeAttendancePageState();
 }
 
-class _TakeAttendancePageState extends State<TakeAttendancePage> {
+class TakeAttendancePageState extends State<TakeAttendancePage> {
   bool isScanning = false;
   bool isConnected = false;
   final String targetMac = "BC:57:29:05:72:73";
@@ -19,28 +18,25 @@ class _TakeAttendancePageState extends State<TakeAttendancePage> {
   @override
   void initState() {
     super.initState();
-    _startScan();
+    startScan();
   }
 
   num calculateDistance(int rssi, int txPower) {
     return pow(10, (txPower - rssi) / (10 * 2));
   }
 
-  void _startScan() async {
+  void startScan() async {
     setState(() => isScanning = true);
 
     await Permission.bluetoothScan.request();
     await Permission.bluetoothConnect.request();
     await Permission.location.request();
-
     await FlutterBluePlus.startScan();
 
     FlutterBluePlus.scanResults.listen((results) async {
       for (var result in results) {
         if (result.device.id.id == targetMac) {
-          num distance = calculateDistance(result.rssi, -59); // txPower is assumed to be -59
-          print("Target device distance: $distance m");
-
+          num distance = calculateDistance(result.rssi, -59);
           if (distance <= 10 && !isConnected) {
             await result.device.connect();
             setState(() {
@@ -53,7 +49,7 @@ class _TakeAttendancePageState extends State<TakeAttendancePage> {
     });
   }
 
-  void _goToHome() {
+  void returnHome() {
     Navigator.of(context).pop();
   }
 
@@ -74,12 +70,12 @@ class _TakeAttendancePageState extends State<TakeAttendancePage> {
             const Text("Attendance Taken", style: TextStyle(color: Colors.white, fontSize: 18)),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _goToHome,
+              onPressed: returnHome,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.yellow,
               ),
               child: const Text("Return to Home Page",style: TextStyle(color: Colors.black),
-            ),
+              ),
             )],
         )
             : Column(

@@ -4,10 +4,10 @@ class AttendanceRecordPage extends StatefulWidget {
   const AttendanceRecordPage({super.key});
 
   @override
-  State<AttendanceRecordPage> createState() => _AttendanceRecordPageState();
+  State<AttendanceRecordPage> createState() => AttendanceRecordPageState();
 }
 
-class _AttendanceRecordPageState extends State<AttendanceRecordPage> {
+class AttendanceRecordPageState extends State<AttendanceRecordPage> {
   String selectedOption = 'Network Protocols';
   final List<String> dropdownItems = ['Network Protocols', 'Networks Lab'];
 
@@ -65,7 +65,6 @@ class _AttendanceRecordPageState extends State<AttendanceRecordPage> {
               ),
             ),
             const SizedBox(height: 32),
-            // You can place attendance list or content here
           ],
         ),
       ),

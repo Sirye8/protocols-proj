@@ -1,4 +1,3 @@
-// reset_password_page.dart
 import 'package:flutter/material.dart';
 import '/app/mobile/auth_services.dart';
 
@@ -6,19 +5,19 @@ class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
 
   @override
-  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
+  State<ResetPasswordPage> createState() => ResetPasswordPageState();
 }
 
-class _ResetPasswordPageState extends State<ResetPasswordPage> {
+class ResetPasswordPageState extends State<ResetPasswordPage> {
   final emailController = TextEditingController();
-  String? message;
+  String? error;
 
-  void _sendResetLink() async {
+  void sendResetLink() async {
     try {
       await authService.value.resetPassword("", email: emailController.text.trim());
-      setState(() => message = "Reset link sent to your email.");
+      setState(() => error = "Reset link sent to your email.");
     } catch (e) {
-      setState(() => message = e.toString());
+      setState(() => error = "Error while sending reset link");
     }
   }
 
@@ -37,12 +36,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               decoration: const InputDecoration(labelText: 'Email', labelStyle: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 16),
-            if (message != null)
-              Text(message!, style: const TextStyle(color: Colors.yellow)),
+            if (error != null)
+              Text(error!, style: const TextStyle(color: Colors.red, fontSize: 16)),
             const SizedBox(height: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow, foregroundColor: Colors.black),
-              onPressed: _sendResetLink,
+              onPressed: sendResetLink,
               child: const Text('Send Reset Email'),
             ),
           ],

@@ -8,35 +8,30 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isLoading = false;
-  String? _error;
+class LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  String? error;
 
-  void _login() async {
-    setState(() => _isLoading = true);
+  void login() async {
     try {
       await authService.value.signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } catch (e) {
-      setState(() => _error = e.toString());
-    } finally {
-      setState(() => _isLoading = false);
+      setState(() => error = "The email or password is incorrect");
     }
   }
 
-  void _loginWithGoogle() async {
-    setState(() => _isLoading = true);
+  void loginWithGoogle() async {
     try {
       await authService.value.signInWithGoogle();
       Navigator.pushReplacement(
@@ -44,9 +39,7 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } catch (e) {
-      setState(() => _error = e.toString());
-    } finally {
-      setState(() => _isLoading = false);
+      setState(() => error = "Could not login with google");
     }
   }
 
@@ -70,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 32),
               TextField(
-                controller: _emailController,
+                controller: emailController,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   labelText: 'Email',
@@ -85,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 16),
               TextField(
-                controller: _passwordController,
+                controller: passwordController,
                 obscureText: true,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
@@ -114,10 +107,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              if (_error != null)
+              if (error!= null)
                 Text(
-                  _error!,
-                  style: const TextStyle(color: Colors.red),
+                  error!,
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
               const SizedBox(height: 16),
@@ -142,10 +135,8 @@ class _LoginPageState extends State<LoginPage> {
                   foregroundColor: Colors.black,
                   minimumSize: const Size.fromHeight(48),
                 ),
-                onPressed: _isLoading ? null : _login,
-                child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.black)
-                    : const Text("Login"),
+                onPressed: login,
+                child: const Text("Login"),
               ),
               const SizedBox(height: 12),
               ElevatedButton.icon(
@@ -160,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: 24,
                 ),
                 label: const Text("Sign in with Google"),
-                onPressed: _isLoading ? null : _loginWithGoogle,
+                onPressed: loginWithGoogle,
               ),
             ],
           ),

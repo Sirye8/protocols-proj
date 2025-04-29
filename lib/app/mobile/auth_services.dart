@@ -50,4 +50,4 @@ class AuthService{
 
     return await firebaseAuth.signInWithCredential(credential);
   }
-  }
+}
