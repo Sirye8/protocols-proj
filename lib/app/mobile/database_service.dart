@@ -1,8 +1,15 @@
-
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class DatabaseService{
-  final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
+  // Get the default Firebase app instance
+  final FirebaseApp _firebaseApp = Firebase.app();
+
+  // Create database reference with both app and URL
+  final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instanceFor(
+      app: Firebase.app(), // Required app parameter
+      databaseURL: 'https://protocolsproj-default-rtdb.europe-west1.firebasedatabase.app/'
+  );
 
   // Create
   Future<void> create({
@@ -34,5 +41,4 @@ class DatabaseService{
     final DatabaseReference ref = _firebaseDatabase.ref().child(path);
     await ref.remove();
   }
-
 }
