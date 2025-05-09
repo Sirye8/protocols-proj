@@ -9,7 +9,7 @@ class AttendanceRecordPage extends StatefulWidget {
 
 class AttendanceRecordPageState extends State<AttendanceRecordPage> {
   String selectedOption = 'Network Protocols';
-  final List<String> dropdownItems = ['Network Protocols', 'Networks Lab'];
+  final List<String> dropdownItems = ['Network Protocols', 'Networks Lab', 'Internet'];
 
   @override
   Widget build(BuildContext context) {

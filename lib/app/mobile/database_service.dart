@@ -2,9 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class DatabaseService{
-  // Get the default Firebase app instance
-  final FirebaseApp _firebaseApp = Firebase.app();
-
   // Create database reference with both app and URL
   final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instanceFor(
       app: Firebase.app(), // Required app parameter
@@ -18,6 +15,15 @@ class DatabaseService{
   }) async{
     final DatabaseReference ref = _firebaseDatabase.ref().child(path);
     await ref.set(data);
+  }
+
+  // Multi Create
+  Future<void> multiCreate(Map<String, dynamic> userInfo) async {
+    try {
+      await _firebaseDatabase.ref().update(userInfo);
+    } catch (e) {
+      throw Exception('Multi-create failed: $e');
+    }
   }
 
   // Read

@@ -30,14 +30,26 @@ class AuthService{
         password: password,
       );
 
-      await databaseService.create(
-        path: 'users/${userCredential.user!.uid}',
-        data: {
-          'email': email,
-          'createdAt': ServerValue.timestamp,
-        },
-      );
+      // Extract and format name from email
+      String formattedName = email
+          .split('@')[0]                // Get part before @
+          .split('.')                   // Split into name components
+          .map((part) => part[0].toUpperCase() + part.substring(1).toLowerCase())
+          .join(' ');                   // Capitalize and join with spaces
 
+      final userData = {
+        'email': email,
+        'name': formattedName,
+        'createdAt': ServerValue.timestamp,
+      };
+      final Map<String, dynamic> userInfo = {
+        'users/${userCredential.user!.uid}': userData,
+        'Attendance/Internet/${userCredential.user!.uid}': userData,
+        'Attendance/Network Protocols/${userCredential.user!.uid}': userData,
+        'Attendance/Networks Lab/${userCredential.user!.uid}': userData,
+      };
+      // Execute atomic update
+      await DatabaseService().multiCreate(userInfo);
       return userCredential;
     } catch (e) {
       throw Exception('Account creation failed: ${e.toString()}');
@@ -72,19 +84,27 @@ class AuthService{
       UserCredential userCredential =
       await firebaseAuth.signInWithCredential(credential);
 
-      // Check if this is a new user
+      // For new users, create entries in multiple paths
       if (userCredential.additionalUserInfo?.isNewUser ?? false) {
         final user = userCredential.user!;
-        await databaseService.create(
-          path: 'users/${user.uid}',
-          data: {
-            'email': user.email,
-            'displayName': user.displayName,
-            'createdAt': ServerValue.timestamp,
-          },
-        );
-      }
+        final uid = user.uid;
 
+        final userData = {
+          'email': user.email,
+          'name': user.displayName,
+          'createdAt': ServerValue.timestamp,
+        };
+
+        final userInfo = {
+          'users/$uid': userData,
+          'Attendance/Internet/$uid': userData,
+          'Attendance/Network Protocols/$uid': userData,
+          'Attendance/Networks Lab/$uid': userData,
+        };
+
+        // Use multiCreate for atomic writes
+        await databaseService.multiCreate(userInfo);
+      }
       return userCredential;
     } catch (e) {
       throw Exception('Google sign-in failed: ${e.toString()}');
