@@ -114,10 +114,6 @@ class AuthService{
           'name': user.displayName,
           'createdAt': ServerValue.timestamp,
         };
-        final userState={
-          'name': user.displayName,
-
-        };
 
         final userInfo = {
           'users/$uid': userData,
