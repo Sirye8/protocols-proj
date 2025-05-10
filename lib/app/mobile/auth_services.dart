@@ -44,12 +44,32 @@ class AuthService{
       };
       final Map<String, dynamic> userInfo = {
         'users/${userCredential.user!.uid}': userData,
-        'Attendance/Internet/${userCredential.user!.uid}': userData,
-        'Attendance/Network Protocols/${userCredential.user!.uid}': userData,
-        'Attendance/Networks Lab/${userCredential.user!.uid}': userData,
+        'Attendance_Record/Internet/${userCredential.user!.uid}/info': userData,
+        'Attendance_Record/Network Protocols/${userCredential.user!.uid}/info': userData,
+        'Attendance_Record/Networks Lab/${userCredential.user!.uid}/info': userData,
       };
-      // Execute atomic update
-      await DatabaseService().multiCreate(userInfo);
+
+      // Fetch schedule from database
+      final scheduleSnapshot = await databaseService.read(path: 'Classes');
+      if (scheduleSnapshot != null && scheduleSnapshot.value != null) {
+        final scheduleData = Map<String, dynamic>.from(scheduleSnapshot.value as Map);
+
+        for (var course in scheduleData.keys) {
+          Map<String, dynamic> sessions = Map<String, dynamic>.from(scheduleData[course]);
+          for (var sessionId in sessions.keys) {
+            var sessionData = Map<String, dynamic>.from(sessions[sessionId]);
+
+            userInfo['Attendance_Record/$course/${userCredential.user!.uid}/sessions/$sessionId'] = {
+              'state': 'absent',
+              'start': sessionData['start'],
+              'end': sessionData['end'],
+            };
+          }
+        }
+      }
+
+      // Save all in one atomic write
+      await databaseService.multiCreate(userInfo);
       return userCredential;
     } catch (e) {
       throw Exception('Account creation failed: ${e.toString()}');
@@ -94,13 +114,35 @@ class AuthService{
           'name': user.displayName,
           'createdAt': ServerValue.timestamp,
         };
+        final userState={
+          'name': user.displayName,
+
+        };
 
         final userInfo = {
           'users/$uid': userData,
-          'Attendance/Internet/$uid': userData,
-          'Attendance/Network Protocols/$uid': userData,
-          'Attendance/Networks Lab/$uid': userData,
+          'Attendance_Record/Internet/$uid/info': userData,
+          'Attendance_Record/Network Protocols/$uid/info': userData,
+          'Attendance_Record/Networks Lab/$uid/info': userData,
         };
+
+        final scheduleSnapshot = await databaseService.read(path: 'Classes');
+        if (scheduleSnapshot != null && scheduleSnapshot.value != null) {
+          final scheduleData = Map<String, dynamic>.from(scheduleSnapshot.value as Map);
+
+          for (var course in scheduleData.keys) {
+            Map<String, dynamic> sessions = Map<String, dynamic>.from(scheduleData[course]);
+            for (var sessionId in sessions.keys) {
+              var sessionData = Map<String, dynamic>.from(sessions[sessionId]);
+
+              userInfo['Attendance_Record/$course/$uid/sessions/$sessionId'] = {
+                'state': 'absent',
+                'start': sessionData['start'],
+                'end': sessionData['end'],
+              };
+            }
+          }
+        }
 
         // Use multiCreate for atomic writes
         await databaseService.multiCreate(userInfo);
