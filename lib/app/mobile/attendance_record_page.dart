@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'database_service.dart';
 
 class AttendanceRecordPage extends StatefulWidget {
   const AttendanceRecordPage({super.key});
@@ -120,21 +121,52 @@ class AttendanceRecordPageState extends State<AttendanceRecordPage> {
                   return Card(
                     color: Colors.grey[900],
                     margin: const EdgeInsets.only(bottom: 12),
-                    child: ListTile(
-                      title: Text("Session: ${session['session']}",
-                          style: const TextStyle(color: Colors.white)),
-                      subtitle: Column(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text("Session: ${session['session']}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 16)),
+                          const SizedBox(height: 6),
                           Text("Attendance: ${session['state']}",
                               style: TextStyle(
-                                  color: session['state'] == 'attended'
-                                      ? Colors.green
-                                      : Colors.redAccent)),
+                                color: session['state'] == 'attended'
+                                    ? Colors.green
+                                    : Colors.redAccent,
+                              )),
+                          const SizedBox(height: 4),
                           Text("Start: ${formatTimestamp(session['start'])}",
                               style: const TextStyle(color: Colors.white70)),
                           Text("End: ${formatTimestamp(session['end'])}",
                               style: const TextStyle(color: Colors.white70)),
+
+                          if (session['state'] == 'attended') ...[
+                            const SizedBox(height: 12),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                foregroundColor: Colors.white,
+                              ),
+                              onPressed: () async {
+                                final uid = FirebaseAuth.instance.currentUser?.uid;
+                                if (uid == null) return;
+
+                                final path =
+                                    'Attendance_Record/$selectedOption/$uid/sessions/${session['session']}';
+                                final dbService = DatabaseService();
+
+                                await dbService.update(
+                                  path: path,
+                                  data: {'state': 'absent'},
+                                );
+
+                                await fetchAttendanceData();
+                              },
+                              child: const Text("Mark as Absent"),
+                            ),
+                          ]
                         ],
                       ),
                     ),

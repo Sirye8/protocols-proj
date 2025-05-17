@@ -22,8 +22,8 @@ class _TakeAttendancePageState extends State<TakeAttendancePage> {
   String _statusMessage = "Initializing...";
   final Map<String, String> _macToCourse = {};
   final Map<String, DateTime> _detectionStartTimes = {};
-  final Duration _requiredDuration = const Duration(seconds: 30);
-  final double _requiredDistance = 5.0;
+  final Duration _requiredDuration = const Duration(seconds: 120);
+  final double _requiredDistance = 2.0;
   final int _txPower = -59;
 
   StreamSubscription<List<ScanResult>>? _scanSubscription;
